@@ -69,10 +69,11 @@ def test(opt, test_loader, dpnet):
     print('Common    Light     Glass     Glossy  Vegetation   Skin    Clothing    Bag       Mean')
     print(round(rmse[0], 4), '  ', round(rmse[1], 4), '  ', round(rmse[2], 4), '  ', round(rmse[3], 4), '  ', round(rmse[4], 4), '  ', round(rmse[5], 4), '  ', round(rmse[6], 4), '  ', round(rmse[7], 4), '  ', round(sum(rmse) / 8.0, 4))
     print()
-    f = open(Path(opt.result_path) / 'performance.txt', 'w')
-    print('Common    Light     Glass     Glossy  Vegetation   Skin    Clothing    Bag       Mean', file=f)
-    print(round(rmse[0], 4), '  ', round(rmse[1], 4), '  ', round(rmse[2], 4), '  ', round(rmse[3], 4), '  ', round(rmse[4], 4), '  ', round(rmse[5], 4), '  ', round(rmse[6], 4), '  ', round(rmse[7], 4), '  ', round(sum(rmse) / 8.0, 4), file=f)
-    f.close()
+    if opt.vis:
+        f = open(Path(opt.result_path) / 'performance.txt', 'w')
+        print('Common    Light     Glass     Glossy  Vegetation   Skin    Clothing    Bag       Mean', file=f)
+        print(round(rmse[0], 4), '  ', round(rmse[1], 4), '  ', round(rmse[2], 4), '  ', round(rmse[3], 4), '  ', round(rmse[4], 4), '  ', round(rmse[5], 4), '  ', round(rmse[6], 4), '  ', round(rmse[7], 4), '  ', round(sum(rmse) / 8.0, 4), file=f)
+        f.close()
 
 
 if __name__ == '__main__':
@@ -80,7 +81,8 @@ if __name__ == '__main__':
     opt = parse_args()
     print(opt)
 
-    (Path(opt.result_path) / 'pngs').mkdir(parents=True, exist_ok=True)
+    if opt.vis:
+        (Path(opt.result_path) / 'pngs').mkdir(parents=True, exist_ok=True)
 
     test_set = StereoDataset(opt.data_path, opt.list_path, opt.test_split)
     test_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.batch_size, shuffle=False)
