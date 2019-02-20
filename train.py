@@ -203,7 +203,7 @@ def test(opt, vis, epoch, test_loader, dpnet):
         rgb = torch.clamp(rgb * rgb_ratio.view(-1, 1, 1, 1), 0.0, opt.clamp_value)
         nir = torch.clamp(nir * nir_ratio.view(-1, 1, 1, 1), 0.0, opt.clamp_value)
         ldisps, rdisps = dpnet(rgb, nir)
-        for i in range(opt.batch_size):
+        for i in range(rgb.shape[0]):
             invd = cpu_np(ldisps[0][i,0])
             f = open(Path(opt.data_path) / collection[i] / 'Keypoint' / (key[i] + '_Keypoint.txt'), 'r')
             gts = f.readlines()

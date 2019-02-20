@@ -42,7 +42,7 @@ def test(opt, test_loader, dpnet):
         rgb = torch.clamp(rgb * rgb_ratio.view(-1, 1, 1, 1), 0.0, opt.clamp_value)
         nir = torch.clamp(nir * nir_ratio.view(-1, 1, 1, 1), 0.0, opt.clamp_value)
         ldisps, rdisps = dpnet(rgb, nir)
-        for i in range(opt.batch_size):
+        for i in range(rgb.shape[0]):
             invd = cpu_np(ldisps[0][i,0])
             if opt.vis:
                 show_ldisp = to_image(ldisps[0][i] / opt.vis_maxd)
