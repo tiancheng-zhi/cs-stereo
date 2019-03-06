@@ -104,6 +104,18 @@ def grad(im):
     return gradx, grady
 
 
+def grad_noconf(im):
+    im_right = im[:, :, :, 2:]
+    im_left = im[:, :, :, :-2]
+    im_down = im[:, :, 2:, :]
+    im_up = im[:, :, :-2, :]
+
+    gradx = F.pad((0.5 * (im_right - im_left)), (1, 1, 0, 0)) / 2.0
+    grady = F.pad((0.5 * (im_down - im_up)), (0, 0, 1, 1)) / 2.0
+
+    return gradx, grady
+
+
 def grad_conf(im, conf):
     conf = F.relu(conf.detach() - 1e-10) + 1e-10
     conf_right = conf[:, :, :, 2:]
@@ -126,6 +138,12 @@ def grad_conf(im, conf):
     grady = F.pad((conf_down * (imd_down - im_up) + conf_up * (im_down - imd_up)) / (conf_down + conf_up), (0, 0, 1, 1)) / 2.0
 
     return gradx, grady
+
+
+def smooth_noconf(im):
+    gradx, grady = grad_noconf(im)
+    smooth = gradx.abs() + grady.abs()
+    return smooth
 
 
 def smooth_conf(im, conf):

@@ -15,11 +15,15 @@ def stn_init(m):
 
 class STN(nn.Module):
 
-    def __init__(self, in_shape):
+    def __init__(self, in_shape, filt):
         super(STN, self).__init__()
         self.ednet = EDNet(in_shape, 3, 3, 1.0/3.0)
+        self.filt = filt
 
     def forward(self, rgbs, exp_ratio):
-        filts = self.ednet(rgbs[0])
+        if self.filt:
+            filts = self.ednet(rgbs[0])
+        else:
+            filts = [torch.ones_like(rgbs[i]) / 3.0 for i in range(4)]
         transes = [(rgbs[i] * filts[i]).sum(1, keepdim=True) * exp_ratio for i in range(4)]
         return transes

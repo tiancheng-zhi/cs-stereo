@@ -23,6 +23,12 @@ def parse_args():
     parser.add_argument('--ckpt-path', type=str, default='ckpt')
     parser.add_argument('--train-split', type=str, default='20170221_1357,20170222_0715,20170222_1207,20170222_1638,20170223_0920,20170223_1217,20170223_1445,20170224_1022')
     parser.add_argument('--test-split', type=str, default='20170222_0951,20170222_1423,20170223_1639,20170224_0742')
+    parser.add_argument('--no-filt', action='store_true')
+    parser.add_argument('--no-conf', action='store_true')
+    parser.add_argument('--no-mat', action='store_true')
+    parser.add_argument('--no-light', action='store_true')
+    parser.add_argument('--no-glass', action='store_true')
+    parser.add_argument('--no-glossy', action='store_true')
     parser.add_argument('--black-level', type=float, default=2.0)
     parser.add_argument('--clamp-value', type=float, default=5.0)
     parser.add_argument('--clamp-disp', type=float, default=0.04)
@@ -116,7 +122,7 @@ def train(opt, vis, epoch, train_loader, dpnet, stnet, dpn_optim, stn_optim):
                 torch.exp(-l1_mean(rgb_grady) / opt.edge_factor) * ldisp_grady.abs()
             r_easmooth = torch.exp(-l1_mean(nir_gradx) / opt.edge_factor) * rdisp_gradx.abs() + \
                 torch.exp(-l1_mean(nir_grady) / opt.edge_factor) * rdisp_grady.abs()
-            if epoch >= opt.warmup_epochs:
+            if (epoch >= opt.warmup_epochs) and (not opt.no_mat):
                 # Common, Light, Glass, Glossy, Vegetation, Skin, Clothing, Bag
                 lcommon, rcommon = rgb_mats[i][:, 0:1], nir_mats[i][:, 0:1]
                 llight, rlight = rgb_mats[i][:, 1:2], nir_mats[i][:, 1:2]
@@ -127,15 +133,33 @@ def train(opt, vis, epoch, train_loader, dpnet, stnet, dpn_optim, stn_optim):
                 lclothing, rclothing = rgb_mats[i][:, 6:7], nir_mats[i][:, 6:7]
                 lbag, rbag = rgb_mats[i][:, 7:8], nir_mats[i][:, 7:8]
 
-                l_lasmooth = smooth_conf(ldisps[i], 1.0 - llight)
-                r_lasmooth = smooth_conf(rdisps[i], 1.0 - rlight)
-                l_dconf = (lcommon + lglass + lglossy) * torch.exp(torch.clamp(ldisps[i], 0, opt.clamp_disp) / opt.disp_factor)
-                r_dconf = (rcommon + rglass + rglossy) * torch.exp(torch.clamp(rdisps[i], 0, opt.clamp_disp) / opt.disp_factor)
-                l_dasmooth = smooth_conf(ldisps[i], l_dconf)
-                r_dasmooth = smooth_conf(rdisps[i], r_dconf)
+                if not opt.no_conf:
+                    l_lasmooth = smooth_conf(ldisps[i], 1.0 - llight)
+                    r_lasmooth = smooth_conf(rdisps[i], 1.0 - rlight)
+                    l_dconf = (lcommon + lglass + lglossy) * torch.exp(torch.clamp(ldisps[i], 0, opt.clamp_disp) / opt.disp_factor)
+                    r_dconf = (rcommon + rglass + rglossy) * torch.exp(torch.clamp(rdisps[i], 0, opt.clamp_disp) / opt.disp_factor)
+                    l_dasmooth = smooth_conf(ldisps[i], l_dconf)
+                    r_dasmooth = smooth_conf(rdisps[i], r_dconf)
+                else:
+                    l_lasmooth = smooth_noconf(ldisps[i])
+                    r_lasmooth = smooth_noconf(rdisps[i])
+                    l_dasmooth = smooth_noconf(ldisps[i])
+                    r_dasmooth = smooth_noconf(rdisps[i])
 
                 ldiffuse = lcommon + lvegetation + lskin + lclothing + lbag
                 rdiffuse = rcommon + rvegetation + rskin + rclothing + rbag
+                if opt.no_light:
+                    ldiffuse += llight
+                    rdiffuse += rlight
+                    llight, rlight = 0 * llight, 0 * rlight
+                if opt.no_glass:
+                    ldiffuse += lglass
+                    rdiffuse += rglass
+                    lglass, rglass = 0 * lglass, 0 * rglass
+                if opt.no_glossy:
+                    ldiffuse += lglossy
+                    rdiffuse += rglossy
+                    lglossy, rglossy = 0 * lglossy, 0 * rglossy
                 dpn_loss = opt.consist * (l_consist + r_consist) + \
                     ldiffuse * (l_photo + opt.diffuse_smooth * l_easmooth) + \
                     rdiffuse * (r_photo + opt.diffuse_smooth * r_easmooth) + \
@@ -159,9 +183,10 @@ def train(opt, vis, epoch, train_loader, dpnet, stnet, dpn_optim, stn_optim):
         dpnet.zero_grad()
         dpn_loss.backward()
         dpn_optim.step()
-        stnet.zero_grad()
-        stn_loss.backward()
-        stn_optim.step()
+        if not opt.no_filt:
+            stnet.zero_grad()
+            stn_loss.backward()
+            stn_optim.step()
         cur_time = time.time()
         dpn_loss_scalar = float(dpn_loss.cpu().detach().numpy())
         stn_loss_scalar = float(stn_loss.cpu().detach().numpy())
@@ -241,7 +266,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.batch_size, shuffle=False)
 
     dpnet = DPN(in_shape=(train_set.height, train_set.width))
-    stnet = STN(in_shape=(test_set.height, test_set.width))
+    stnet = STN(in_shape=(test_set.height, test_set.width), filt=not opt.no_filt)
 
     dpnet = dpnet.cuda()
     stnet = stnet.cuda()
