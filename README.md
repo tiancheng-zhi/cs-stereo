@@ -1,8 +1,8 @@
 # Deep Material-aware Cross-spectral Stereo Matching
 
-Tiancheng Zhi, Bernardo R. Pires, Martial Hebert, Srinivasa G. Narasimhan
+[Tiancheng Zhi](http://cs.cmu.edu/~tzhi), [Bernardo R. Pires](http://www.andrew.cmu.edu/user/bpires/), [Martial Hebert](http://www.cs.cmu.edu/~hebert/), [Srinivasa G. Narasimhan](http://www.cs.cmu.edu/~srinivas/)
 
-CVPR 2018
+IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018. 
 
 ## Disclaimer
 This is an improved and simplified version of the CVPR code. Compared with the original CVPR version, this code achieves a better performance (see pretrained model below). Main changes include:
