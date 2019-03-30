@@ -6,6 +6,10 @@ IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018.
 
 [[Project](http://www.cs.cmu.edu/~ILIM/projects/AA/RGBNIRStereo/)] [[Paper](http://www.cs.cmu.edu/~ILIM/projects/AA/RGBNIRStereo/files/ZPHN-CVPR18.pdf)] [[Supp](http://www.cs.cmu.edu/~ILIM/projects/AA/RGBNIRStereo/files/ZPHN-CVPR18-supp.pdf)]
 
+<p align="center">
+<img src="imgs/teaser.png" width="800px"/>
+</p>
+
 ## Disclaimer
 This is an improved and simplified version of the CVPR code. Compared with the original CVPR version, this code achieves a better performance (see pretrained model below). Main changes include:
 
