@@ -31,7 +31,7 @@ To compare with the original CVPR result, please refer to the [project](http://w
 
 ## Data
 
-iDownload [rgbnir_stereo](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/rgbnir_stereo/), and move "data" and "lists" into the "cs-stereo" folder.
+Download [rgbnir_stereo](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/rgbnir_stereo/), and move "data" and "lists" into the "cs-stereo" folder.
 
 Download [precomputed_material](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/precomputed_material/), and put it under the "cs-stereo" folder.
 
