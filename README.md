@@ -53,7 +53,7 @@ CUDA_VISIBLE_DEVICES=1,0 python3 test.py --ckpt-path ckpt/47.pth
 ```
 
 ## Pretrained Model
-Download [pretrained.pth](https://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/pretrained.pth)
+Download [pretrained.pth](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/pretrained.pth)
 
 Performance (RMSE, lower is better):
 
