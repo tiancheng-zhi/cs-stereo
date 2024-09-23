@@ -31,9 +31,9 @@ To compare with the original CVPR result, please refer to the [project](http://w
 
 ## Data
 
-Download [rgbnir_stereo](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/rgbnir_stereo/), and move "data" and "lists" into the "cs-stereo" folder.
+Download [rgbnir_stereo](https://drive.google.com/file/d/1ikj7UcnQsdxUfDF5EI3YcFK-p63KHQmy/view), and move "data" and "lists" into the "cs-stereo" folder.
 
-Download [precomputed_material](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/precomputed_material/), and put it under the "cs-stereo" folder.
+Download [precomputed_material](https://drive.google.com/file/d/1CpwHY_xziqkdoa4YXwQbzSGQHZHgvCLM/view), and put it under the "cs-stereo" folder.
 
 Then run:
 ```
@@ -53,7 +53,7 @@ CUDA_VISIBLE_DEVICES=1,0 python3 test.py --ckpt-path ckpt/47.pth
 ```
 
 ## Pretrained Model
-Download [pretrained.pth](http://platformpgh.cs.cmu.edu/tzhi/RGBNIRStereoRelease/pretrained.pth)
+Download [pretrained.pth](https://drive.google.com/file/d/1i1FQNnH02p1WmrNL5LgZ0ShBYZFBXP_H/view)
 
 Performance (RMSE, lower is better):
 
